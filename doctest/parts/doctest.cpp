@@ -425,9 +425,6 @@ String::~String() {
         delete[] data.ptr;
 }
 
-String::String(const char* in)
-        : String(in, strlen(in)) {}
-
 String::String(const char* in, unsigned in_size) {
     using namespace std;
     if(in_size <= last) {

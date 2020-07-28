@@ -366,6 +366,8 @@ DOCTEST_GCC_SUPPRESS_WARNING_POP
 #endif // linux
 #endif // DOCTEST_BREAK_INTO_DEBUGGER
 
+extern "C"  decltype(sizeof(0)) strlen(const char* __s) throw();
+
 // this is kept here for backwards compatibility since the config option was changed
 #ifdef DOCTEST_CONFIG_USE_IOSFWD
 #define DOCTEST_CONFIG_USE_STD_HEADERS
@@ -478,7 +480,8 @@ public:
     ~String();
 
     // cppcheck-suppress noExplicitConstructor
-    String(const char* in);
+    String(const char* in)
+        : String(in, static_cast<unsigned>(strlen(in))) {}
     String(const char* in, unsigned in_size);
 
     String(const String& other);
