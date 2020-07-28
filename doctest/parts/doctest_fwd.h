@@ -466,12 +466,15 @@ class DOCTEST_INTERFACE String
 
     bool isOnStack() const { return (buf[last] & 128) == 0; }
     void setOnHeap();
-    void setLast(unsigned in = last);
+    void setLast(unsigned in = last) { buf[last] = char(in); }
 
     void copy(const String& other);
 
 public:
-    String();
+    String() {
+        buf[0] = '\0';
+        setLast();
+    }
     ~String();
 
     // cppcheck-suppress noExplicitConstructor
@@ -995,7 +998,7 @@ namespace detail {
         Subcase(const String& name, const char* file, int line);
         ~Subcase();
 
-        operator bool() const;
+        explicit operator bool() const { return m_entered; }
     };
 
     template <typename L, typename R>

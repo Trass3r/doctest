@@ -469,12 +469,15 @@ class DOCTEST_INTERFACE String
 
     bool isOnStack() const { return (buf[last] & 128) == 0; }
     void setOnHeap();
-    void setLast(unsigned in = last);
+    void setLast(unsigned in = last) { buf[last] = char(in); }
 
     void copy(const String& other);
 
 public:
-    String();
+    String() {
+        buf[0] = '\0';
+        setLast();
+    }
     ~String();
 
     // cppcheck-suppress noExplicitConstructor
@@ -998,7 +1001,7 @@ namespace detail {
         Subcase(const String& name, const char* file, int line);
         ~Subcase();
 
-        operator bool() const;
+        explicit operator bool() const { return m_entered; }
     };
 
     template <typename L, typename R>
@@ -3017,7 +3020,6 @@ typedef timer_large_integer::type ticks_t;
 } // namespace detail
 
 void String::setOnHeap() { *reinterpret_cast<unsigned char*>(&buf[last]) = 128; }
-void String::setLast(unsigned in) { buf[last] = char(in); }
 
 void String::copy(const String& other) {
     using namespace std;
@@ -3030,11 +3032,6 @@ void String::copy(const String& other) {
         data.ptr      = new char[data.capacity];
         memcpy(data.ptr, other.data.ptr, data.size + 1);
     }
-}
-
-String::String() {
-    buf[0] = '\0';
-    setLast();
 }
 
 String::~String() {
@@ -3594,8 +3591,6 @@ namespace detail {
     DOCTEST_CLANG_SUPPRESS_WARNING_POP	
     DOCTEST_GCC_SUPPRESS_WARNING_POP	
     DOCTEST_MSVC_SUPPRESS_WARNING_POP
-
-    Subcase::operator bool() const { return m_entered; }
 
     Result::Result(bool passed, const String& decomposition)
             : m_passed(passed)
